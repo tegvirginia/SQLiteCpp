@@ -20,14 +20,12 @@ if (MSVC)
     set(CPPCHECK_ARG_TEMPLATE   "--template=vs")
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    # Flags for linking with multithread static C++ runtime, required by googletest
-    if (SQLITECPP_BUILD_TESTS)
-        message(STATUS "Linking against multithread static C++ runtime for unit tests with googletest")
-        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
-        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
-        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    endif (SQLITECPP_BUILD_TESTS)
+    # Flags for linking with multithread static C++ runtime
+    message(STATUS "Linking against multithread static C++ runtime unit tests compatibility")
+    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
+    set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -162,6 +160,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 # add sources of the wrapper as a "SQLiteCpp" static library
 add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
 target_include_directories(SQLiteCpp PUBLIC "${PROJECT_SOURCE_DIR}/include")
+target_link_libraries(SQLiteCpp sqlite3)
 
 if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
     set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
